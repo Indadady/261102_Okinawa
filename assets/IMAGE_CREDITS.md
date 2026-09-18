@@ -3,7 +3,7 @@
 | File | Source | License |
 |------|--------|---------|
 | hero.jpg | [Commons: File:Onna Okinawa Japan Cape-Manzamo-01.jpg](https://commons.wikimedia.org/wiki/File:Onna_Okinawa_Japan_Cape-Manzamo-01.jpg) | CC BY-SA 3.0 |
-| og-thumb.jpg | [Commons: File:Naha Shuri Castle02s5s3200.jpg](https://commons.wikimedia.org/wiki/File:Naha_Shuri_Castle02s5s3200.jpg) | CC BY-SA |
+| og-thumb.jpg | [Commons: File:Naha Okinawa Japan Shuri-Castle-01.jpg](https://commons.wikimedia.org/wiki/File:Naha_Okinawa_Japan_Shuri-Castle-01.jpg) | CC BY-SA |
 | day1-makishi.jpg | [Commons: File:Naha City First Makishi Public Market new building.JPG](https://commons.wikimedia.org/wiki/File:Naha_City_First_Makishi_Public_Market_new_building.JPG) | CC BY-SA |
 | day2-churaumi.jpg | [Commons: File:Okinawa Aquarium.jpg](https://commons.wikimedia.org/wiki/File:Okinawa_Aquarium.jpg) | CC BY-SA |
 | day2-manzamo.jpg | [Commons: File:Cape Manzamo, Onna, Okinawa - Feb 17, 2019.jpg](https://commons.wikimedia.org/wiki/File:Cape_Manzamo,_Onna,_Okinawa_-_Feb_17,_2019.jpg) | CC BY-SA |
