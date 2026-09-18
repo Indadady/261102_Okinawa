@@ -3,8 +3,8 @@
 2026. 11. 03(화) ~ 11. 07(토) · 4박 5일 · 16명 단독  
 이스타항공 ZE631 / ZE632 · 인천 ↔ 나하 · 숙소 르와지르 나하 또는 동급
 
-- 가이드북: https://indadady.github.io/261103_Okinawa/
-- 저장소: https://github.com/Indadady/261103_Okinawa
+- 가이드북: https://indadady.github.io/261102_Okinawa/
+- 저장소: https://github.com/Indadady/261102_Okinawa
 
 ## 담당
 

@@ -1,4 +1,4 @@
-# Image Credits — 261103_Okinawa
+# Image Credits — 261102_Okinawa
 
 | File | Source | License |
 |------|--------|---------|
