@@ -161,7 +161,6 @@
                     <a href="#entry" class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-tm hover:bg-slate-50 rounded-lg">입국</a>
                     <a href="#map-section" class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-tm hover:bg-slate-50 rounded-lg">여행동선</a>
                     <a href="#schedule" class="px-3 py-2 text-sm font-bold text-tm hover:bg-slate-50 rounded-lg">세부일정</a>
-                    <button type="button" onclick="window.print()" class="shrink-0 inline-flex items-center gap-1.5 bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-700"><i class="fa-solid fa-print"></i> 일정표 인쇄하기</button>
                     <a href="#hotel" class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-tm hover:bg-slate-50 rounded-lg">숙소</a>
                     <a href="#smart-info" class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-tm hover:bg-slate-50 rounded-lg">여행비서</a>
                     <a href="#check" class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-tm hover:bg-slate-50 rounded-lg">준비물</a>
@@ -338,7 +337,10 @@
         <div class="container mx-auto px-4">
             <div class="max-w-4xl mx-auto">
                 <div class="text-center mb-10">
-                    <h2 class="text-2xl md:text-3xl font-bold font-title">세부 일정</h2>
+                    <div class="flex flex-wrap items-center justify-center gap-3">
+                        <h2 class="text-2xl md:text-3xl font-bold font-title">세부 일정</h2>
+                        <button type="button" onclick="window.print()" class="inline-flex items-center gap-1.5 bg-slate-800 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-700 shadow-sm"><i class="fa-solid fa-print"></i> 일정표 인쇄하기</button>
+                    </div>
                     <p class="text-slate-500 text-sm mt-2">탭을 눌러 일자별 상세 내용을 확인하세요.</p>
                     <p class="text-sm text-rose-700 font-bold mt-3">식사는 프리미엄급입니다. 석식은 일정식 · 야키니쿠 무제한 · 샤브샤브 · 스시세트입니다.</p>
                     <p class="text-xs text-red-500 mt-2 font-bold bg-red-50 inline-block px-3 py-1 rounded-full shadow-sm"><i class="fa-solid fa-circle-exclamation"></i> 상기 상세 일정은 항공 및 현지 사정에 의해 변동될 수 있습니다.</p>
