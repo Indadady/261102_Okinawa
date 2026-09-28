@@ -7,7 +7,7 @@
 | day1-makishi.jpg | [Commons: File:Naha City First Makishi Public Market new building.JPG](https://commons.wikimedia.org/wiki/File:Naha_City_First_Makishi_Public_Market_new_building.JPG) | CC BY-SA |
 | day2-churaumi.jpg | [Commons: File:Okinawa Aquarium.jpg](https://commons.wikimedia.org/wiki/File:Okinawa_Aquarium.jpg) | CC BY-SA |
 | day2-manzamo.jpg | [Commons: File:Cape Manzamo, Onna, Okinawa - Feb 17, 2019.jpg](https://commons.wikimedia.org/wiki/File:Cape_Manzamo,_Onna,_Okinawa_-_Feb_17,_2019.jpg) | CC BY-SA |
-| day2-american.jpg | [Commons: File:The Beach Tower Okinawa near Chatan Sunset Beach.JPG](https://commons.wikimedia.org/wiki/File:The_Beach_Tower_Okinawa_near_Chatan_Sunset_Beach.JPG) | CC BY-SA |
+| day2-american.jpg | [Commons: File:Canal in Mihama Town Resort American Village.JPG](https://commons.wikimedia.org/wiki/File:Canal_in_Mihama_Town_Resort_American_Village.JPG) | CC BY-SA 4.0 |
 | day3-chinen.jpg | [Commons: File:Okinawa Nanjo Cape Chinen view hdsr VLux5 28.jpg](https://commons.wikimedia.org/wiki/File:Okinawa_Nanjo_Cape_Chinen_view_hdsr_VLux5_28.jpg) | CC BY 4.0 |
 | day3-okinawa-world.jpg | [Commons: File:おきなわワールド - panoramio.jpg](https://commons.wikimedia.org/wiki/File:%E3%81%8A%E3%81%8D%E3%81%AA%E3%82%8F%E3%83%AF%E3%83%BC%E3%83%AB%E3%83%89_-_panoramio.jpg) | CC BY |
 | day3-peace.jpg | [Commons: File:Itoman Okinawa Okinawa-Cornerstone-of-Peace-Memorial-02.jpg](https://commons.wikimedia.org/wiki/File:Itoman_Okinawa_Okinawa-Cornerstone-of-Peace-Memorial-02.jpg) | CC BY-SA |
