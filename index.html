@@ -131,7 +131,7 @@
             .print-page-break { page-break-before: always; break-before: page; }
             .print-checklist { border: 1.5px solid #1e293b; border-radius: 6px; padding: 12px 14px; background: #fff !important; margin-bottom: 12px; }
             .print-checklist h2 { font-size: 13px; font-weight: 800; color: #004098; margin: 0 0 8px 0; }
-            .print-checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; font-size: 11px; font-weight: 600; }
+            .print-checklist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 14px; font-size: 11px; font-weight: 600; }
             .print-check-item { display: flex; align-items: flex-start; gap: 7px; line-height: 1.35; }
             .print-check-box { width: 12px; height: 12px; border: 1.5px solid #004098; border-radius: 2px; flex-shrink: 0; margin-top: 1.5px; }
             .print-qr-row { display: flex; gap: 10px; margin-bottom: 10px; }
@@ -161,13 +161,13 @@
                     <a href="#entry" class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-tm hover:bg-slate-50 rounded-lg">입국</a>
                     <a href="#map-section" class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-tm hover:bg-slate-50 rounded-lg">여행동선</a>
                     <a href="#schedule" class="px-3 py-2 text-sm font-bold text-tm hover:bg-slate-50 rounded-lg">세부일정</a>
+                    <button type="button" onclick="window.print()" class="shrink-0 inline-flex items-center gap-1.5 bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-700"><i class="fa-solid fa-print"></i> 일정표 인쇄하기</button>
                     <a href="#hotel" class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-tm hover:bg-slate-50 rounded-lg">숙소</a>
                     <a href="#smart-info" class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-tm hover:bg-slate-50 rounded-lg">여행비서</a>
                     <a href="#check" class="px-3 py-2 text-sm font-medium text-slate-600 hover:text-tm hover:bg-slate-50 rounded-lg">준비물</a>
                     <a href="#contact" class="px-3 py-2 text-sm font-bold text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg">비상연락</a>
                 </div>
             </div>
-            <button type="button" onclick="window.print()" class="shrink-0 inline-flex items-center gap-1.5 bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-700 ml-2"><i class="fa-solid fa-print"></i> 일정표 인쇄하기</button>
             <button type="button" onclick="shareLink()" class="shrink-0 p-2 text-slate-500 hover:text-tm ml-1"><i class="fa-solid fa-share-nodes text-xl"></i></button>
         </nav>
     </header>
@@ -1026,30 +1026,31 @@
                 <div class="print-checklist-grid">
                     <div class="print-check-item"><span class="print-check-box"></span>★여권 원본★ (유효기간 확인)</div>
                     <div class="print-check-item"><span class="print-check-box"></span>Visit Japan Web QR 캡처</div>
-                    <div class="print-check-item"><span class="print-check-box"></span>편한 걷기 신발</div>
-                    <div class="print-check-item"><span class="print-check-box"></span>가을 겉옷 (가디건, 바람막이)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>여권 사본 또는 휴대폰 사진</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>엔화 현금 · 신용카드</div>
                     <div class="print-check-item"><span class="print-check-box"></span>110V 돼지코 어댑터</div>
-                    <div class="print-check-item"><span class="print-check-box"></span>개인 상비약</div>
-                    <div class="print-check-item"><span class="print-check-box"></span>작은 우산 또는 우비</div>
-                    <div class="print-check-item"><span class="print-check-box"></span>핸드폰 충전기 및 보조배터리</div>
-                    <div class="print-check-item"><span class="print-check-box"></span>엔화 및 카드</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>충전기 · 보조배터리</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>편한 걷기 신발 · 양말</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>가을 겉옷 (가디건, 얇은 바람막이)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>선글라스 · 모자</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>자외선 차단제</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>작은 우산 또는 접이식 우비</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>개인 상비약 (소화제, 진통제, 밴드)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>멀미약 (글래스보트)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>온천용 수건 · 실내 슬리퍼</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>세면도구 (칫솔, 치약)</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>여벌 속옷</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>개인 물통</div>
+                    <div class="print-check-item"><span class="print-check-box"></span>휴대용 티슈 · 물티슈</div>
                 </div>
             </div>
             <div class="print-qr-row">
                 <div class="print-qr-box">
                     <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=https%3A%2F%2Findadady.github.io%2F261102_Okinawa%2F" alt="스마트 가이드북 QR">
                     <div class="qr-copy">
-                        <strong>스마트 가이드북 · 일정표</strong>
-                        QR을 스캔하면 일정·동선·날씨를 스마트폰에서 볼 수 있습니다.
+                        <strong>스마트 가이드북</strong>
+                        QR을 스캔하면 일정·동선·날씨·준비물을 스마트폰에서 볼 수 있습니다.
                         <span class="qr-url">https://indadady.github.io/261102_Okinawa/</span>
-                    </div>
-                </div>
-                <div class="print-qr-box">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&data=https%3A%2F%2Findadady.github.io%2F261102_Okinawa%2F%23check" alt="여행준비물 QR">
-                    <div class="qr-copy">
-                        <strong>여행준비물 체크리스트</strong>
-                        QR을 스캔하면 준비물을 휴대폰에서 바로 체크할 수 있습니다.
-                        <span class="qr-url">https://indadady.github.io/261102_Okinawa/#check</span>
                     </div>
                 </div>
             </div>
@@ -1148,13 +1149,22 @@
         const CHECK_ITEMS = [
             '★여권 원본★ (유효기간 확인)',
             'Visit Japan Web QR 캡처',
-            '편한 걷기 신발',
-            '가을 겉옷 (가디건, 바람막이)',
+            '여권 사본 또는 휴대폰 사진',
+            '엔화 현금 · 신용카드',
             '110V 돼지코 어댑터',
-            '개인 상비약',
-            '작은 우산 또는 우비',
-            '핸드폰 충전기 및 보조배터리',
-            '엔화 및 카드'
+            '충전기 · 보조배터리',
+            '편한 걷기 신발 · 양말',
+            '가을 겉옷 (가디건, 얇은 바람막이)',
+            '선글라스 · 모자',
+            '자외선 차단제',
+            '작은 우산 또는 접이식 우비',
+            '개인 상비약 (소화제, 진통제, 밴드)',
+            '멀미약 (글래스보트)',
+            '온천용 수건 · 실내 슬리퍼',
+            '세면도구 (칫솔, 치약)',
+            '여벌 속옷',
+            '개인 물통',
+            '휴대용 티슈 · 물티슈'
         ];
         function renderChecklist(){
             const container = document.getElementById('checklist-container');
