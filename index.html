@@ -35,7 +35,30 @@
         }
         @media (max-width: 768px){ .hero-bg { background-attachment: scroll; } }
         #map { height: 500px; width: 100%; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); z-index: 10; }
+        .map-wrap { position: relative; z-index: 0; }
         .leaflet-maplibre-gl { z-index: 0 !important; }
+        .leaflet-control-zoom { display: none !important; }
+        #map-distance {
+            position: absolute; top: 12px; right: 12px; z-index: 450;
+            min-width: 8rem; max-width: min(46vw, 12.5rem); text-align: right;
+            background: rgba(255,255,255,.94); backdrop-filter: blur(8px);
+            border-radius: 14px; padding: 10px 12px;
+            box-shadow: 0 8px 24px rgba(15,23,42,.14); border: 1px solid rgba(148,163,184,.35);
+            pointer-events: none;
+        }
+        @media (max-width: 380px) {
+            #map-distance { min-width: 7rem; padding: 8px 10px; }
+        }
+        .map-zoom-btns {
+            position: absolute; left: 12px; bottom: 14px; z-index: 450;
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .map-zoom-btns button {
+            width: 40px; height: 40px; border-radius: 12px; border: 1px solid #cbd5e1;
+            background: rgba(255,255,255,.96); color: #0f172a; font-size: 18px; font-weight: 800;
+            box-shadow: 0 4px 14px rgba(15,23,42,.12);
+        }
+        .map-zoom-btns button:active { transform: scale(.96); }
         .custom-icon { background: transparent; border: none; }
         .map-pin-wrap { display: flex; flex-direction: column; align-items: center; }
         .map-pin-dot {
@@ -360,7 +383,7 @@
                 <span class="text-tm font-black tracking-widest text-xs uppercase">ANIMATED ROUTING MAP</span>
                 <h2 class="text-3xl font-bold text-slate-800 tracking-tight font-title mt-2">한눈에 보는 동선 지도</h2>
                 <p class="text-slate-500 mt-2 text-sm md:text-base">실제 도로를 따라 이동 순서가 천천히 그려집니다. 일자 버튼을 누르면 해당 구간만 볼 수 있습니다.</p>
-                <p id="map-hint" class="text-slate-400 mt-1 text-xs">전체 여정 — 인천 ↔ 나하 항공 구간</p>
+                <p id="map-hint" class="text-slate-400 mt-1 text-xs">전체 여정 — 인천 ↔ 나하 항공 + 현지 차량 동선</p>
             </div>
             <div class="flex flex-wrap justify-center gap-2 mb-6">
                 <button type="button" onclick="filterMap('all')" id="btn-map-all" class="map-btn px-4 py-2 rounded-full text-sm font-bold bg-slate-800 text-white shadow-sm transition-colors">전체 여정</button>
@@ -369,10 +392,17 @@
                 <button type="button" onclick="filterMap('day3')" id="btn-map-day3" class="map-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-300 text-slate-600 shadow-sm transition-colors">3일차(남부)</button>
                 <button type="button" onclick="filterMap('day4')" id="btn-map-day4" class="map-btn px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-300 text-slate-600 shadow-sm transition-colors">4일차</button>
             </div>
-            <div class="max-w-5xl mx-auto border border-slate-200 rounded-2xl p-1 shadow-lg bg-white relative z-0">
+            <div class="map-wrap max-w-5xl mx-auto border border-slate-200 rounded-2xl p-1 shadow-lg bg-white relative z-0">
                 <div id="map"></div>
-                <div id="map-status" class="absolute top-4 right-4 z-[400] max-w-[min(70%,18rem)] bg-white/90 backdrop-blur px-3 py-1.5 rounded-xl shadow font-bold text-xs text-slate-700 pointer-events-none text-right">
-                    <i class="fa-solid fa-route text-tm mr-1"></i><span id="map-status-text">실제 도로 동선</span>
+                <div id="map-distance" class="hidden">
+                    <p class="text-[10px] font-bold text-slate-400 tracking-wide">대략 이동</p>
+                    <p id="map-distance-leg" class="font-bold text-xs text-slate-800 leading-snug mt-0.5"></p>
+                    <p id="map-distance-time" class="font-black text-sm text-tm mt-0.5"></p>
+                    <p id="map-distance-km" class="text-[10px] font-bold text-slate-500 mt-0.5"></p>
+                </div>
+                <div class="map-zoom-btns">
+                    <button type="button" onclick="mapZoom(1)" aria-label="줌인">+</button>
+                    <button type="button" onclick="mapZoom(-1)" aria-label="줌아웃">−</button>
                 </div>
             </div>
         </div>
@@ -381,13 +411,20 @@
     <section id="schedule" class="py-16 bg-white border-t border-slate-100">
         <div class="container mx-auto px-4">
             <div class="max-w-4xl mx-auto">
-                <div class="text-center mb-10">
-                    <div class="flex flex-wrap items-center justify-center gap-3">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+                    <div class="text-center sm:text-left">
                         <h2 class="text-2xl md:text-3xl font-bold font-title">세부 일정</h2>
-                        <button type="button" onclick="window.print()" class="inline-flex items-center gap-1.5 bg-slate-800 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-700 shadow-sm"><i class="fa-solid fa-print"></i> 일정표 인쇄하기</button>
+                        <p class="text-slate-500 text-sm mt-2">탭을 눌러 일자별 상세 내용을 확인하세요.</p>
                     </div>
-                    <p class="text-slate-500 text-sm mt-2">탭을 눌러 일자별 상세 내용을 확인하세요.</p>
-                    <p class="text-sm text-rose-700 font-bold mt-3">식사는 프리미엄급입니다. 석식은 일정식 · 야키니쿠 무제한 · 샤브샤브입니다.</p>
+                    <div class="text-center sm:text-right shrink-0 print-hidden">
+                        <button type="button" onclick="handlePrint()" class="inline-flex items-center justify-center gap-1.5 bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-md hover:bg-slate-700">
+                            <i class="fa-solid fa-print"></i> 일정표 인쇄하기
+                        </button>
+                        <p class="mt-2 text-xs text-slate-500 leading-relaxed max-w-[16rem] mx-auto sm:ml-auto sm:mr-0">모바일(카카오톡 등)에서는<br>인쇄가 어려울 수 있어요.<br>다른 브라우저나 PC에서 열어 주세요.</p>
+                    </div>
+                </div>
+                <div class="text-center mb-8">
+                    <p class="text-sm text-rose-700 font-bold">식사는 프리미엄급입니다. 석식은 일정식 · 야키니쿠 무제한 · 샤브샤브입니다.</p>
                     <p class="text-xs text-red-500 mt-2 font-bold bg-red-50 inline-block px-3 py-1 rounded-full shadow-sm"><i class="fa-solid fa-circle-exclamation"></i> 상기 상세 일정은 항공 및 현지 사정에 의해 변동될 수 있습니다.</p>
                 </div>
                 <div class="flex overflow-x-auto no-scrollbar gap-2 mb-8 justify-start md:justify-center px-2">
@@ -1090,7 +1127,21 @@
             const isEventDay = !!dayKey;
             bar.classList.toggle('hidden', !isEventDay);
             document.body.classList.toggle('event-day', isEventDay);
-            if (dayKey) activateDayTab(dayKey);
+            if (dayKey) {
+                activateDayTab(dayKey);
+                if (typeof setMapBtnActive === 'function') setMapBtnActive(dayKey);
+            }
+        }
+        function isInAppBrowser() {
+            const ua = navigator.userAgent.toLowerCase();
+            return /kakaotalk|naver|line\/|fbav|instagram|daumapps|everytimeapp|band\//.test(ua);
+        }
+        function handlePrint() {
+            if (isInAppBrowser()) {
+                alert('이 앱에서는 인쇄가 어려워요.\n다른 브라우저나 PC에서 열어 주세요.');
+                return;
+            }
+            window.print();
         }
         function showToast(message) {
             const toast = document.createElement('div');
@@ -1327,15 +1378,15 @@
         let activeBus = null;
         const osrmCache = {};
         const mapHints = {
-            all: '전체 여정 — 인천 ↔ 나하 항공 구간 (점선)',
-            day1: '1일차 동선 — 나하공항 → 마키시 공설시장 → 국제거리 → 호텔',
+            all: '전체 여정 — 인천 ↔ 나하 항공(점선) + 현지 차량 동선',
+            day1: '1일차 동선 — 인천 → 나하 → 마키시시장 → 국제거리 → 호텔',
             day2: '2일차 동선 — 호텔 → 츄라우미 → 글래스보트 → 만좌모 → 아메리칸빌리지 → 호텔',
             day3: '3일차 동선 — 호텔 → 치넨미사키 → 오키나와월드 → 평화공원 → 마사히로 → 호텔',
-            day4: '4일차 동선 — 호텔 → 슈리성 → 면세점 → 나하공항 → 인천'
+            day4: '4일차 동선 — 호텔 → 슈리성 → 면세점 → 나하 → 인천 귀국'
         };
         const spots = {
             icn: { coords: [37.4602, 126.4407], title: '인천공항', color: '#1e293b', icon: '✈️' },
-            oka: { coords: [26.1958, 127.6456], title: '나하공항', color: '#1e293b', icon: '✈️' },
+            oka: { coords: [26.1958, 127.6456], title: '나하공항', color: '#1e293b', icon: '🛬' },
             makishi: { coords: [26.2156, 127.6889], title: '마키시시장', color: '#f97316', icon: '🛒' },
             hotel: { coords: [26.2208, 127.6758], title: '르와지르나하', color: '#004098', icon: '🏨' },
             churaumi: { coords: [26.6942, 127.8778], title: '츄라우미', color: '#0891b2', icon: '🐋' },
@@ -1352,44 +1403,96 @@
         };
         const routes = {
             all: {
-                points: ['icn', 'oka'],
-                maxZoom: 5,
+                points: ['icn','oka','makishi','kokusai','hotel','churaumi','kariyushi','manzamo','american','chinen','okiworld','peace','masahiro','shuri','dfs'],
+                maxZoom: 8,
                 lines: [
-                    { pts: ['icn', 'oka'], color: '#004098', mode: 'air' },
-                    { pts: ['oka', 'icn'], color: '#64748b', mode: 'air' }
+                    { pts: ['icn','oka'], color: '#004098', mode: 'air' },
+                    { pts: ['oka','makishi','kokusai','hotel'], color: '#f97316' },
+                    { pts: ['hotel','churaumi','kariyushi','manzamo','american','hotel'], color: '#0891b2' },
+                    { pts: ['hotel','chinen','okiworld','peace','masahiro','hotel'], color: '#7c3aed' },
+                    { pts: ['hotel','shuri','dfs','oka'], color: '#db2777' },
+                    { pts: ['oka','icn'], color: '#64748b', mode: 'air' }
                 ]
             },
             day1: {
-                points: ['oka', 'makishi', 'kokusai', 'hotel'],
+                points: ['icn','oka','makishi','kokusai','hotel'],
                 maxZoom: 13,
                 lines: [
-                    { pts: ['icn', 'oka'], color: '#004098', mode: 'air' },
-                    { pts: ['oka', 'makishi', 'kokusai', 'hotel'], color: '#f97316' }
+                    { pts: ['icn','oka'], color: '#004098', mode: 'air' },
+                    { pts: ['oka','makishi','kokusai','hotel'], color: '#f97316' }
                 ]
             },
             day2: {
-                points: ['hotel', 'churaumi', 'kariyushi', 'manzamo', 'american'],
+                points: ['hotel','churaumi','kariyushi','manzamo','american'],
                 maxZoom: 10,
-                lines: [{ pts: ['hotel', 'churaumi', 'kariyushi', 'manzamo', 'american', 'hotel'], color: '#0891b2' }]
+                lines: [{ pts: ['hotel','churaumi','kariyushi','manzamo','american','hotel'], color: '#0891b2' }]
             },
             day3: {
-                points: ['hotel', 'chinen', 'okiworld', 'peace', 'masahiro'],
+                points: ['hotel','chinen','okiworld','peace','masahiro'],
                 maxZoom: 11,
-                lines: [{ pts: ['hotel', 'chinen', 'okiworld', 'peace', 'masahiro', 'hotel'], color: '#7c3aed' }]
+                lines: [{ pts: ['hotel','chinen','okiworld','peace','masahiro','hotel'], color: '#7c3aed' }]
             },
             day4: {
-                points: ['hotel', 'shuri', 'dfs', 'oka'],
+                points: ['hotel','shuri','dfs','oka','icn'],
                 maxZoom: 13,
                 lines: [
-                    { pts: ['hotel', 'shuri', 'dfs', 'oka'], color: '#db2777' },
-                    { pts: ['oka', 'icn'], color: '#64748b', mode: 'air' }
+                    { pts: ['hotel','shuri','dfs','oka'], color: '#db2777' },
+                    { pts: ['oka','icn'], color: '#64748b', mode: 'air' }
                 ]
             }
         };
         function isMobileView() { return window.matchMedia('(max-width: 768px)').matches; }
-        function setMapStatus(text) {
-            const el = document.getElementById('map-status-text');
-            if (el) el.textContent = text;
+        function pathMeters(path) {
+            let total = 0;
+            for (let i = 1; i < path.length; i++) total += L.latLng(path[i - 1]).distanceTo(L.latLng(path[i]));
+            return total;
+        }
+        function formatApproxKm(meters) {
+            if (!meters || meters <= 0) return '';
+            if (meters < 800) return '약 ' + Math.round(meters / 100) * 100 + 'm';
+            const km = meters / 1000;
+            if (km < 10) return '약 ' + (Math.round(km * 2) / 2) + 'km';
+            if (km < 50) return '약 ' + Math.round(km) + 'km';
+            if (km < 400) return '약 ' + Math.round(km / 5) * 5 + 'km';
+            return '약 ' + Math.round(km / 50) * 50 + 'km';
+        }
+        function estimateSeconds(meters, mode) {
+            if (!meters || meters <= 0) return 0;
+            if (mode === 'air') return meters / (800 / 3.6);
+            return meters / (25 / 3.6);
+        }
+        function groupTravelSeconds(seconds, mode) {
+            if (!seconds || seconds <= 0) return 0;
+            if (mode === 'air') return seconds;
+            return Math.max(12 * 60, seconds * 1.4 + 10 * 60);
+        }
+        function formatApproxTime(seconds) {
+            if (!seconds || seconds <= 0) return '';
+            const min = Math.max(1, Math.ceil(seconds / 60));
+            if (min < 55) return '약 ' + Math.max(15, Math.ceil(min / 5) * 5) + '분';
+            const rounded = Math.ceil(min / 10) * 10;
+            const h = Math.floor(rounded / 60);
+            const m = rounded % 60;
+            if (!h) return '약 ' + m + '분';
+            if (!m) return '약 ' + h + '시간';
+            return '약 ' + h + '시간 ' + m + '분';
+        }
+        function setMapDistance(fromKey, toKey, meters, seconds, mode) {
+            const box = document.getElementById('map-distance');
+            const legEl = document.getElementById('map-distance-leg');
+            const timeEl = document.getElementById('map-distance-time');
+            const kmEl = document.getElementById('map-distance-km');
+            if (!box || !legEl || !timeEl || !kmEl) return;
+            const kmLabel = formatApproxKm(meters);
+            const timeLabel = formatApproxTime(groupTravelSeconds(seconds, mode));
+            if (!fromKey || (!kmLabel && !timeLabel)) {
+                box.classList.add('hidden');
+                return;
+            }
+            box.classList.remove('hidden');
+            legEl.textContent = spots[fromKey].title + ' → ' + spots[toKey].title;
+            timeEl.textContent = timeLabel;
+            kmEl.textContent = kmLabel;
         }
         function pinIcon(spot) {
             return L.divIcon({
@@ -1399,15 +1502,8 @@
                 iconAnchor: [48, 16]
             });
         }
-        function vehicleIcon(emoji, heading, zeroDeg) {
-            const rot = ((heading - zeroDeg) % 360 + 360) % 360;
-            return L.divIcon({
-                className: 'custom-icon',
-                html: `<div class="map-bus" data-zero="${zeroDeg}" style="transform:rotate(${rot}deg)">${emoji}</div>`,
-                iconSize: [28, 28],
-                iconAnchor: [14, 14]
-            });
-        }
+        const PLANE_REST_DEG = 45;
+        const BUS_REST_DEG = 90;
         function bearingDeg(from, to) {
             const lat1 = from[0] * Math.PI / 180;
             const lat2 = to[0] * Math.PI / 180;
@@ -1415,6 +1511,43 @@
             const y = Math.sin(dLng) * Math.cos(lat2);
             const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
             return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+        }
+        function headingPair(latlngs, i) {
+            const a = latlngs[Math.max(0, Math.min(i, latlngs.length - 1))];
+            let j = Math.min(Math.max(i + 1, 1), latlngs.length - 1);
+            while (j < latlngs.length - 1 && L.latLng(a).distanceTo(L.latLng(latlngs[j])) < 40) j++;
+            return [a, latlngs[j]];
+        }
+        function vehicleCssTransform(mode, from, to) {
+            if (!from || !to) return 'rotate(0deg)';
+            if (L.latLng(from).distanceTo(L.latLng(to)) < 8) return null;
+            const heading = bearingDeg(from, to);
+            const rest = mode === 'air' ? PLANE_REST_DEG : BUS_REST_DEG;
+            let rot = heading - rest;
+            while (rot > 180) rot -= 360;
+            while (rot < -180) rot += 360;
+            if (mode !== 'air' && Math.abs(rot) > 90) {
+                const flipRot = rot > 0 ? rot - 180 : rot + 180;
+                return `scaleX(-1) rotate(${flipRot}deg)`;
+            }
+            return `rotate(${rot}deg)`;
+        }
+        function vehicleIcon(mode, from, to) {
+            const emoji = mode === 'air' ? '✈️' : '🚌';
+            const transform = vehicleCssTransform(mode, from, to) || 'rotate(0deg)';
+            return L.divIcon({
+                className: 'custom-icon',
+                html: `<div class="map-bus" data-mode="${mode}" style="transform:${transform}">${emoji}</div>`,
+                iconSize: [28, 28],
+                iconAnchor: [14, 14]
+            });
+        }
+        function applyVehicleHeading(marker, from, to, mode) {
+            if (!marker || !from || !to) return;
+            const transform = vehicleCssTransform(mode, from, to);
+            if (!transform) return;
+            const el = marker.getElement()?.querySelector('.map-bus');
+            if (el) el.style.transform = transform;
         }
         function clearMapLayers() {
             if (activeBus) activeBus._aborted = true;
@@ -1434,11 +1567,13 @@
                 const data = await res.json();
                 if (data.code === 'Ok' && data.routes && data.routes[0]) {
                     const path = data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
-                    osrmCache[key] = path;
-                    return path;
+                    const packed = { path, meters: data.routes[0].distance, seconds: data.routes[0].duration };
+                    osrmCache[key] = packed;
+                    return packed;
                 }
             } catch (e) { /* straight fallback */ }
-            return pts;
+            const meters = pathMeters(pts);
+            return { path: pts, meters, seconds: estimateSeconds(meters, 'drive') };
         }
         function lineDuration(pixelLength, routeKey) {
             const mobile = isMobileView();
@@ -1475,7 +1610,7 @@
                 setTimeout(() => resolve(ms), ms + 40);
             });
         }
-        function moveMarkerAlong(marker, latlngs, duration) {
+        function moveMarkerAlong(marker, latlngs, duration, mode) {
             return new Promise(resolve => {
                 if (!marker || !latlngs || latlngs.length < 2) { resolve(); return; }
                 const dists = [0];
@@ -1485,6 +1620,8 @@
                     dists.push(total);
                 }
                 if (total === 0) { resolve(); return; }
+                const [h0a, h0b] = headingPair(latlngs, 0);
+                applyVehicleHeading(marker, h0a, h0b, mode);
                 const start = performance.now();
                 const ease = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
                 function frame(now) {
@@ -1498,14 +1635,23 @@
                     const span = (dists[i] - dists[i - 1]) || 1;
                     const f = (target - dists[i - 1]) / span;
                     marker.setLatLng([a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]);
-                    const heading = bearingDeg(a, b);
-                    const zeroDeg = marker._zeroDeg || 90;
-                    const el = marker.getElement()?.querySelector('.map-bus');
-                    if (el) el.style.transform = `rotate(${((heading - zeroDeg) % 360 + 360) % 360}deg)`;
+                    const [ha, hb] = headingPair(latlngs, i - 1);
+                    applyVehicleHeading(marker, ha, hb, mode || marker._mode || 'drive');
                     if (t < 1) requestAnimationFrame(frame);
                     else resolve();
                 }
                 requestAnimationFrame(frame);
+            });
+        }
+        function fitPath(path, maxZoom) {
+            return new Promise(resolve => {
+                if (!currentMap || !path || path.length < 2) { resolve(); return; }
+                const b = L.latLngBounds(path);
+                let done = false;
+                const finish = () => { if (done) return; done = true; currentMap.off('moveend', finish); resolve(); };
+                currentMap.once('moveend', finish);
+                currentMap.fitBounds(b.pad(0.18), { animate: true, duration: 0.7, maxZoom: maxZoom || 12, padding: [44, 44] });
+                setTimeout(finish, 850);
             });
         }
         async function drawMap(routeKey) {
@@ -1516,7 +1662,7 @@
             const hint = mapHints[routeKey] || '';
             const hintEl = document.getElementById('map-hint');
             if (hintEl) hintEl.textContent = hint;
-            setMapStatus('실제 도로 동선을 불러오는 중...');
+            setMapDistance('', '', 0, 0);
             const bounds = L.latLngBounds(routeData.points.map(key => spots[key].coords));
             currentMap.fitBounds(bounds, { padding: [50, 50], maxZoom: routeData.maxZoom || 11 });
             setTimeout(() => currentMap.invalidateSize(), 120);
@@ -1526,26 +1672,29 @@
                     legs.push({ from: lineDef.pts[i], to: lineDef.pts[i + 1], color: lineDef.color, mode: lineDef.mode || 'drive' });
                 }
             });
-            const paths = await Promise.all(legs.map(leg => {
-                if (leg.mode === 'air') return Promise.resolve([spots[leg.from].coords, spots[leg.to].coords]);
+            const packed = await Promise.all(legs.map(async leg => {
+                if (leg.mode === 'air') {
+                    const path = [spots[leg.from].coords, spots[leg.to].coords];
+                    const meters = pathMeters(path);
+                    return { path, meters, seconds: estimateSeconds(meters, 'air') };
+                }
                 return roadPath([spots[leg.from].coords, spots[leg.to].coords]);
             }));
             if (seq !== mapDrawSeq) return;
-            if (routeKey === 'all') {
-                paths.forEach(path => path.forEach(pt => bounds.extend(pt)));
-                currentMap.fitBounds(bounds, { padding: [50, 50], maxZoom: routeData.maxZoom || 11 });
-            }
+            const paths = packed.map(item => item.path);
             await new Promise(r => setTimeout(r, 280));
             if (seq !== mapDrawSeq) return;
-            const ghostPts = routeKey === 'all' ? paths.flat() : paths.filter((_, i) => legs[i].mode !== 'air').flat();
-            if (ghostPts.length) {
-                const ghost = L.polyline(ghostPts, { color: '#94a3b8', weight: 4, opacity: 0.22, lineJoin: 'round', lineCap: 'round' }).addTo(currentMap);
+            paths.forEach((path, i) => {
+                const ghost = L.polyline(path, {
+                    color: '#94a3b8', weight: 3, opacity: 0.2,
+                    dashArray: legs[i].mode === 'air' ? '10,10' : null,
+                    lineJoin: 'round', lineCap: 'round'
+                }).addTo(currentMap);
                 mapLayers.push(ghost);
-            }
+            });
             const placed = new Set();
             const addPin = (key) => {
-                if (placed.has(key)) return;
-                if (routeKey !== 'all' && (key === 'icn')) return;
+                if (!key || placed.has(key)) return;
                 placed.add(key);
                 const spot = spots[key];
                 const marker = L.marker(spot.coords, { icon: pinIcon(spot), zIndexOffset: 200 })
@@ -1553,27 +1702,35 @@
                     .bindTooltip(spot.title, { direction: 'top', offset: [0, -16] });
                 mapLayers.push(marker);
             };
-            addPin(legs[0].from === 'icn' && routeKey !== 'all' ? legs.find(l => l.from !== 'icn')?.from || legs[0].to : legs[0].from);
+            const legMaxZoom = (leg) => {
+                if (leg.mode === 'air') return 5;
+                if (routeKey === 'all') return 11;
+                return Math.max(routeData.maxZoom || 12, 11);
+            };
+            await fitPath(paths[0], legMaxZoom(legs[0]));
+            if (seq !== mapDrawSeq) return;
+            addPin(legs[0].from);
             const firstLeg = legs[0];
-            const firstHeading = bearingDeg(spots[firstLeg.from].coords, spots[firstLeg.to].coords);
-            const firstZero = firstLeg.mode === 'air' ? 45 : 90;
-            const firstEmoji = firstLeg.mode === 'air' ? '✈️' : '🚌';
-            const bus = L.marker(spots[firstLeg.from].coords, { icon: vehicleIcon(firstEmoji, firstHeading, firstZero), zIndexOffset: 900 }).addTo(currentMap);
+            const bus = L.marker(spots[firstLeg.from].coords, {
+                icon: vehicleIcon(firstLeg.mode, spots[firstLeg.from].coords, spots[firstLeg.to].coords),
+                zIndexOffset: 900
+            }).addTo(currentMap);
             bus._aborted = false;
-            bus._zeroDeg = firstZero;
+            bus._mode = firstLeg.mode;
             activeBus = bus;
             mapLayers.push(bus);
             for (let i = 0; i < legs.length; i++) {
                 if (seq !== mapDrawSeq) return;
                 const leg = legs[i];
                 const path = paths[i];
-                const zero = leg.mode === 'air' ? 45 : 90;
-                const emoji = leg.mode === 'air' ? '✈️' : '🚌';
-                const heading = bearingDeg(path[0], path[path.length - 1]);
-                bus._zeroDeg = zero;
-                bus.setIcon(vehicleIcon(emoji, heading, zero));
+                const meters = packed[i].meters || pathMeters(path);
+                const seconds = packed[i].seconds || estimateSeconds(meters, leg.mode);
+                bus._mode = leg.mode;
+                bus.setIcon(vehicleIcon(leg.mode, spots[leg.from].coords, spots[leg.to].coords));
                 bus.setLatLng(path[0]);
-                setMapStatus(`${spots[leg.from].title} → ${spots[leg.to].title}`);
+                setMapDistance(leg.from, leg.to, meters, seconds, leg.mode);
+                await fitPath(path, legMaxZoom(leg));
+                if (seq !== mapDrawSeq) return;
                 const poly = L.polyline(path, {
                     color: leg.color, weight: leg.mode === 'air' ? 3 : 5, opacity: 0.95,
                     dashArray: leg.mode === 'air' ? '10 8' : null,
@@ -1582,42 +1739,30 @@
                 mapLayers.push(poly);
                 const ready = await whenPathReady(poly);
                 const ms = lineDuration(ready ? ready.getTotalLength() : 400, routeKey);
-                await Promise.all([animateLine(poly, ms), moveMarkerAlong(bus, path, ms)]);
+                await Promise.all([animateLine(poly, ms), moveMarkerAlong(bus, path, ms, leg.mode)]);
                 if (seq !== mapDrawSeq) return;
                 addPin(leg.to);
                 await new Promise(r => setTimeout(r, isMobileView() ? 280 : 140));
             }
             if (seq !== mapDrawSeq) return;
-            setMapStatus(hint);
             if (bus && currentMap.hasLayer(bus)) currentMap.removeLayer(bus);
             mapLayers = mapLayers.filter(layer => layer !== bus);
             if (activeBus === bus) activeBus = null;
+            const finalKeys = routeData.points.filter(k => k !== 'icn');
+            const overviewKeys = finalKeys.length ? finalKeys : routeData.points;
+            currentMap.fitBounds(L.latLngBounds(overviewKeys.map(k => spots[k].coords)), {
+                padding: [40, 40],
+                maxZoom: routeKey === 'all' ? 8 : Math.min(routeData.maxZoom || 11, 11),
+                animate: true
+            });
             setTimeout(() => currentMap.invalidateSize(), 160);
         }
-        function initMap(initialKey) {
-            if (mapInited || !window.L) return;
-            mapInited = true;
-            currentMap = L.map('map', { scrollWheelZoom: false });
-            if (typeof L.maplibreGL === 'function') {
-                L.maplibreGL({ style: 'https://tiles.openfreemap.org/styles/positron' }).addTo(currentMap);
-            } else {
-                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-                    maxZoom: 19, attribution: 'Tiles © Esri'
-                }).addTo(currentMap);
-            }
-            const startKey = initialKey || getTodayDayKey() || (isMobileView() ? 'day1' : 'all');
-            document.querySelectorAll('.map-btn').forEach(btn => {
-                btn.classList.remove('bg-slate-800', 'text-white');
-                btn.classList.add('bg-white', 'text-slate-600');
-            });
-            const startBtn = document.getElementById('btn-map-' + startKey);
-            if (startBtn) {
-                startBtn.classList.remove('bg-white', 'text-slate-600');
-                startBtn.classList.add('bg-slate-800', 'text-white');
-            }
-            drawMap(startKey);
+        function mapZoom(delta) {
+            if (!currentMap) return;
+            if (delta > 0) currentMap.zoomIn();
+            else currentMap.zoomOut();
         }
-        window.filterMap = function(day) {
+        function setMapBtnActive(day) {
             document.querySelectorAll('.map-btn').forEach(btn => {
                 btn.classList.remove('bg-slate-800', 'text-white');
                 btn.classList.add('bg-white', 'text-slate-600');
@@ -1627,9 +1772,34 @@
                 targetBtn.classList.remove('bg-white', 'text-slate-600');
                 targetBtn.classList.add('bg-slate-800', 'text-white');
             }
+        }
+        function initMap(initialKey) {
+            if (mapInited || !window.L) return;
+            mapInited = true;
+            currentMap = L.map('map', { scrollWheelZoom: false, zoomControl: false });
+            if (typeof L.maplibreGL === 'function') {
+                L.maplibreGL({ style: 'https://tiles.openfreemap.org/styles/positron' }).addTo(currentMap);
+            } else {
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 19, attribution: 'Tiles &copy; Esri'
+                }).addTo(currentMap);
+            }
+            const startKey = initialKey || getTodayDayKey() || (isMobileView() ? 'day1' : 'all');
+            setMapBtnActive(startKey);
+            if (startKey !== 'all') activateDayTab(startKey);
+            drawMap(startKey);
+        }
+        window.filterMap = function(day) {
+            setMapBtnActive(day);
             if (!currentMap) { initMap(day); return; }
             drawMap(day);
         };
+        window.mapZoom = mapZoom;
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => { if (currentMap) currentMap.invalidateSize(); }, 200);
+        });
         const io = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) { initMap(); io.disconnect(); }
         }, { threshold: 0.1 });
