@@ -17,3 +17,4 @@
 | day5-kokusai.jpg | [Commons: File:Kokusai-dori08s3s4440.jpg](https://commons.wikimedia.org/wiki/File:Kokusai-dori08s3s4440.jpg) | CC BY-SA |
 | hotel.jpg | [르와지르 호텔 나하 공식 다운로드](https://www.loisir-naha.com/download/) 본관·스파타워 공중 전경 | 호텔 공식 |
 | hotel-room.jpg | [르와지르 호텔 나하 공식 다운로드](https://www.loisir-naha.com/download/) 본관 디럭스 트윈 | 호텔 공식 |
+| seatmap-tw281-outbound.png | 티웨이항공 사전좌석 배정 화면 캡처 (TW281 인천→나하) | 여행사 업무용 |
