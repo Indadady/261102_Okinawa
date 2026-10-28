@@ -834,15 +834,20 @@
             <div class="text-center mb-10">
                 <span class="text-tm font-black tracking-widest text-xs uppercase">Travel Concierge</span>
                 <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-2 font-title">여행비서</h2>
-                <p class="text-slate-500 text-sm mt-2">나하 날씨, 엔화 계산, 물가 참고와 일본어 회화를 한곳에서 봅니다.</p>
+                <p class="text-slate-500 text-sm mt-2">실시간 나하 날씨·옷차림, 엔화 계산, 물가 참고와 일본어 회화를 한곳에서 봅니다.</p>
             </div>
             <div class="grid lg:grid-cols-2 gap-6 mb-8 min-w-0">
                 <div class="info-card bg-blue-50/50 p-4 sm:p-5 rounded-2xl border border-blue-100">
-                    <h3 class="font-bold text-blue-900 mb-4"><i class="fa-solid fa-cloud-sun text-blue-500 mr-2"></i>나하 4일 날씨</h3>
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                        <h3 class="font-bold text-blue-900"><i class="fa-solid fa-cloud-sun text-blue-500 mr-2"></i>나하 4일 날씨 · 옷차림</h3>
+                        <span id="weather-updated" class="text-[10px] text-slate-400 font-medium"></span>
+                    </div>
                     <div id="weather-container" class="weather-grid">
                         <div class="text-sm text-slate-500 py-4 col-span-4 text-center">날씨 정보를 불러오는 중입니다...</div>
                     </div>
-                    <p class="mt-3 text-xs text-slate-600 bg-white p-3 rounded-lg border border-blue-100">11월 오키나와는 평균 22℃ 안팎입니다. 얇은 긴소매와 가디건을 준비해 주세요.</p>
+                    <div id="clothing-recommendation" class="mt-3 bg-white p-3.5 rounded-xl border border-blue-100">
+                        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed"><i class="fa-solid fa-shirt text-blue-500 mr-1.5"></i><span>실시간 기온을 반영한 옷차림 추천을 준비하는 중입니다…</span></p>
+                    </div>
                 </div>
                 <div class="info-card bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm">
                     <h3 class="font-bold text-slate-800 mb-4 break-keep"><i class="fa-solid fa-yen-sign text-emerald-500 mr-2"></i>엔화 계산기 <span class="block sm:inline text-xs font-normal text-slate-400 mt-1 sm:mt-0">(송금 환율 +1.5%)</span></h3>
@@ -1578,12 +1583,38 @@
             document.getElementById('phrase-display').classList.add('flex');
         }
 
+        function clothingAdviceForNaha(avgMin, avgMax, rainyDays, maxSwing) {
+            let tip = `앞으로 4일 나하는 평균 최저 <strong>${avgMin}°C</strong> ~ 최고 <strong>${avgMax}°C</strong>로 예측됩니다. `;
+            if (avgMax >= 28) {
+                tip += `낮에는 더운 편입니다. <strong>통풍되는 반팔·얇은 긴팔</strong>과 자외선 차단제, 챙 있는 모자를 준비해 주세요.`;
+            } else if (avgMax >= 24) {
+                tip += `초가을처럼 따뜻한 날씨입니다. <strong>반팔·얇은 긴소매</strong>에 저녁·실내 냉방용 <strong>가벼운 가디건</strong>을 챙기면 좋습니다.`;
+            } else if (avgMax >= 20) {
+                tip += `11월 오키나와 전형적인 기온입니다. <strong>얇은 긴소매·니트</strong>와 일교차용 <strong>가디건·얇은 바람막이</strong>를 권장합니다.`;
+            } else if (avgMax >= 16) {
+                tip += `선선한 날씨입니다. <strong>긴팔·얇은 자켓</strong>을 입고, 아침저녁에는 겉옷을 겹쳐 입어 주세요.`;
+            } else {
+                tip += `다소 쌀쌀할 수 있습니다. <strong>가벼운 겉옷·니트</strong>를 준비하고 걷기 편한 신발을 신어 주세요.`;
+            }
+            if (maxSwing >= 8) {
+                tip += ` 일교차가 커서 <strong>겹쳐 입기</strong>가 편합니다.`;
+            }
+            if (rainyDays >= 2) {
+                tip += ` 비 소식이 있어 <strong>접이식 우산·가벼운 우비</strong>를 함께 챙기세요.`;
+            } else if (rainyDays === 1) {
+                tip += ` 하루 정도 비 가능성이 있으니 <strong>작은 우산</strong>을 준비해 주세요.`;
+            }
+            tip += ` 실내 냉방·온천 대비로 여벌 겉옷도 유용합니다.`;
+            return tip;
+        }
         async function fetchWeather() {
             const container = document.getElementById('weather-container');
+            const clothEl = document.querySelector('#clothing-recommendation p');
+            const updated = document.getElementById('weather-updated');
             if(!container) return;
             try {
                 const lat = 26.2124, lon = 127.6792;
-                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=Asia/Tokyo&forecast_days=4`);
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia/Tokyo&forecast_days=4`);
                 const data = await res.json();
                 const weatherCodes = {
                     0: ['☀️', '맑음'], 1: ['🌤️', '맑음'], 2: ['⛅', '구름'], 3: ['☁️', '흐림'],
@@ -1594,7 +1625,14 @@
                     80: ['🌦️', '소나기'], 81: ['🌦️', '소나기'], 82: ['🌦️', '소나기'],
                     95: ['⛈️', '뇌우'], 96: ['⛈️', '우박'], 99: ['⛈️', '우박']
                 };
+                const isRainy = (code, pop) => {
+                    if (code >= 51 && code <= 67) return true;
+                    if (code >= 80 && code <= 82) return true;
+                    if (code >= 95) return true;
+                    return (pop || 0) >= 50;
+                };
                 let html = '';
+                let totalMax = 0, totalMin = 0, rainyDays = 0, maxSwing = 0;
                 const days = Math.min(4, data.daily.time.length);
                 for (let i = 0; i < days; i++) {
                     const dateObj = new Date(data.daily.time[i] + 'T12:00:00');
@@ -1604,6 +1642,11 @@
                     const code = data.daily.weathercode[i];
                     const maxT = Math.round(data.daily.temperature_2m_max[i]);
                     const minT = Math.round(data.daily.temperature_2m_min[i]);
+                    const pop = data.daily.precipitation_probability_max ? Math.round(data.daily.precipitation_probability_max[i] || 0) : 0;
+                    totalMax += maxT;
+                    totalMin += minT;
+                    maxSwing = Math.max(maxSwing, maxT - minT);
+                    if (isRainy(code, pop)) rainyDays += 1;
                     const [emoji, label] = weatherCodes[code] || ['☁️', '흐림'];
                     html += `<div class="weather-card bg-white rounded-xl p-2 text-center border border-blue-100">
                         <p class="text-[10px] sm:text-xs font-bold text-slate-500 leading-tight">${month}/${date}<br>(${dayName})</p>
@@ -1613,8 +1656,20 @@
                     </div>`;
                 }
                 container.innerHTML = html;
+                const avgMax = Math.round(totalMax / days);
+                const avgMin = Math.round(totalMin / days);
+                if (clothEl) {
+                    clothEl.innerHTML = `<i class="fa-solid fa-shirt text-blue-500 mr-1.5"></i><span>${clothingAdviceForNaha(avgMin, avgMax, rainyDays, maxSwing)}</span>`;
+                }
+                if (updated) {
+                    const now = new Date();
+                    updated.textContent = `업데이트 ${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+                }
             } catch (e) {
                 container.innerHTML = '<div class="text-sm text-slate-500 py-4 col-span-4 text-center">날씨 정보를 불러오지 못했습니다.</div>';
+                if (clothEl) {
+                    clothEl.innerHTML = '<i class="fa-solid fa-shirt text-blue-500 mr-1.5"></i><span>11월 오키나와는 보통 20~24°C입니다. 얇은 긴소매와 가디건·작은 우산을 준비해 주세요.</span>';
+                }
             }
         }
         fetchWeather();
